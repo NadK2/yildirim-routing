@@ -23,7 +23,7 @@ Route::get('/',function(){
 	return '<h1>Hello World</h1>';
 });
 
-$response = app()->resolveRequest();
+$response = app()->start();
 
 $response->send();
 
@@ -31,7 +31,7 @@ $response->send();
 
 Be sure to add the following after you have defined your routes:
 
-`$response = app()->resolveRequest();`
+`$response = app()->start();`
 
 This method initiates the process to resolve the incoming request and returns a `Yildirim\Classes\Response` object.
 

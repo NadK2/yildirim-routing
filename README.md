@@ -32,9 +32,11 @@ $response->send();
 Be sure to add the following after you have defined your routes:
 
 `$response = app()->resolveRequest();`
+
 This method initiates the process to resolve the incoming request and returns a `Yildirim\Classes\Response` object.
 
 `$response->send();`
+
 This will output the response.
 
 # Routing

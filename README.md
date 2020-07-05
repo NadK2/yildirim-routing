@@ -9,9 +9,24 @@ Simple PHP Routing without framework.
 - Middleware
 - Dependency Injection
 
+
+Install using composer
+
+```
+{
+ "minimum-stability": "dev",
+ "require": {
+  "yildirim/routing": "^1.0"
+ }
+}
+
 ```
 
-$ composer require yildirim/routing
+or 
+
+```
+
+$ composer require yildirim/routing:"^1.0"
 
 ```
 

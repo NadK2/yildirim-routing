@@ -10,8 +10,9 @@ Simple PHP Routing without framework.
 - Dependency Injection
 
 
-Install using composer
+#### Install with Composer
 
+add to composer.json
 ```
 {
  "minimum-stability": "dev",
@@ -19,6 +20,12 @@ Install using composer
   "yildirim/routing": "^1.0"
  }
 }
+
+```
+run
+```
+
+$ composer install
 
 ```
 

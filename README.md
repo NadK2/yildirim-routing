@@ -24,7 +24,7 @@ The most basic usage is to add a route with a closure.
 use Yildirim\Routing\Route;
 
 Route::get('/',function(){
-	return '<h1>Hello World</h1>';
+    return '<h1>Hello World</h1>';
 });
 
 $response = app()->start();

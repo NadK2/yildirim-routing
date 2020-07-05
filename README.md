@@ -43,6 +43,10 @@ This method initiates the process to resolve the incoming request and returns a 
 
 This will output the response.
 
+&nbsp;
+___
+&nbsp;
+
 Refer to Wiki **[Documentation](https://github.com/NadK2/yildirim-routing/wiki)** for more information.
 
 **[Routing](https://github.com/NadK2/yildirim-routing/wiki/1.-Routing)**

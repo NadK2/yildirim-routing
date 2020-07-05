@@ -5,6 +5,7 @@ Simple PHP Routing without framework.
 - Friendly URL's
 - REST / Resourceful routing
 - Dynamic URL parameters
+- URL Parameter Regular Expression Constraint
 - Middleware
 - Dependency Injection
 

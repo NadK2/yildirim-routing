@@ -74,7 +74,7 @@ class Router
             $request = $middleware->run($request);
 
             if (!$request instanceof Request) {
-                throwException('MiddlewareException', "Middleware [ $m ] method [ run ] must return an instance of [ " . Request::class . " ]");
+                throwException('MiddlewareException', "Middleware [ $m ] method [ run ] must return an instance of [ " . get_class(request()) . " ]");
             }
         }
 
@@ -162,9 +162,9 @@ class Router
 
         foreach (Route::getRouteList() as $route) {
 
-            if ($route->matches($path)) {
+            if (RouteMatcher::matches($route, $path)) {
 
-                if ($route->method != request()->method()) {
+                if ($route->method != "ANY" && $route->method != request()->method()) {
                     throwException('MethodNotAllowed', "Method [ '" . request()->method() . "' ] is not allowed for route [ '" . request()->uri() . "' ]", 405);
                 }
 

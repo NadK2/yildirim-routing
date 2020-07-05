@@ -61,6 +61,33 @@ class Path
     }
 
     /**
+     * must
+     *
+     * @param  mixed $slug
+     * @param  mixed $regex
+     * @return Static
+     */
+    public function match($slug, $regex = null)
+    {
+
+        $slugs = is_array($slug) ? $slug : [$slug => $regex];
+
+        foreach ($slugs as $slug => $regex) {
+            $param = $this->parameters->first(function ($param) use ($slug) {
+                return $param->id == $slug;
+            });
+
+            if (!$param) {
+                throwException('RouteException', 'Regular Expression constraint for [ ' . $slug . ' ] does not match any given parameter.');
+            }
+
+            $param->regex = $regex;
+        }
+
+        return $this;
+    }
+
+    /**
      * setParameters
      *
      * @return void
@@ -116,7 +143,7 @@ class Path
      * @param  mixed $positions
      * @return Collection
      */
-    private function removeSlugsAtPositions($positions)
+    public function removeSlugsAtPositions($positions)
     {
         return $this->parameters->filter(function ($param) use ($positions) {
             return !in_array($param->position, $positions);
@@ -128,11 +155,23 @@ class Path
      *
      * @return Collection
      */
-    private function valuesAtPositions($positions)
+    public function valuesAtPositions($positions)
     {
         return $this->parameters->filter(function ($param) use ($positions) {
             return in_array($param->position, $positions);
         });
+    }
+
+    /**
+     * valuesAtPositions
+     *
+     * @return Path
+     */
+    public function valueAtPosition($position)
+    {
+        return $this->parameters->filter(function ($param) use ($position) {
+            return $param->position == $position;
+        })->first()->value ?? null;
     }
 
     /**
@@ -167,7 +206,7 @@ class Path
      *
      * @return Collection
      */
-    private function optionalSlugs()
+    public function optionalSlugs()
     {
         return $this->slugs()->filter(function ($slug) {
             return $slug->isOptional();
@@ -179,7 +218,7 @@ class Path
      *
      * @return Collection
      */
-    private function requiredSlugs()
+    public function requiredSlugs()
     {
         return $this->slugs()->filter(function ($slug) {
             return !$slug->isOptional();
@@ -202,42 +241,11 @@ class Path
      *
      * @return Collection
      */
-    private function requiredParameters()
+    public function requiredParameters()
     {
         return $this->parameters->filter(function ($param) {
             return ($param->isSlug() && !$param->isOptional()) || !$param->isSlug();
         });
-    }
-
-    /**
-     * matches
-     *
-     * @param  mixed $path
-     * @return bool
-     */
-    public function matches($path)
-    {
-        //exact route match. no slugs.
-        if (rtrim($this->uri, "/") == rtrim($path->uri, "/")) {
-            return true;
-        }
-
-        //route with slugs matches requested url.
-        if (
-            $this->withoutSlugs() == $path->withoutSlugValues($this->slugs()) &&
-            (
-                $this->requiredParameters()->count() <= $path->parameters->count() ||
-                $this->parameters->count() == $path->parameters->count()
-            )
-        ) {
-            return true;
-        }
-
-        if ($this->parameters->count() != $path->parameters->count()) {
-            return false;
-        }
-
-        return false;
     }
 
 }

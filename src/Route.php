@@ -28,6 +28,28 @@ class Route
     private static $groupMiddleware = [];
 
     /**
+     *
+     */
+    private static $regex = [];
+
+    /**
+     *
+     */
+    private static $groupRegex = [];
+
+    /**
+     * any
+     *
+     * @param  mixed $uri
+     * @param  mixed $handler
+     * @return void
+     */
+    public static function any($uri, $handler)
+    {
+        return self::addRoute('ANY', $uri, $handler);
+    }
+
+    /**
      * get
      *
      * @param  mixed $uri
@@ -37,6 +59,18 @@ class Route
     public static function get($uri, $handler)
     {
         return self::addRoute('GET', $uri, $handler);
+    }
+
+    /**
+     * options
+     *
+     * @param  mixed $uri
+     * @param  mixed $handler
+     * @return void
+     */
+    public static function options($uri, $handler)
+    {
+        return self::addRoute('OPTIONS', $uri, $handler);
     }
 
     /**
@@ -135,6 +169,10 @@ class Route
         $newMiddleware = self::$middleware ? true : false;
         self::$middleware = [];
 
+        self::$groupRegex = array_merge(self::$groupRegex, self::$regex);
+        $newRegex = self::$regex ? true : false;
+        self::$regex = [];
+
         //invoke group callback.
         $callback();
 
@@ -142,6 +180,10 @@ class Route
 
         if ($newMiddleware) {
             array_pop(self::$groupMiddleware);
+        }
+
+        if ($newRegex) {
+            array_pop(self::$groupRegex);
         }
 
         return;
@@ -174,6 +216,15 @@ class Route
         }
 
         self::$middleware = array_merge(self::$middleware, $middleware);
+
+        return new static;
+    }
+
+    public static function match($slug, $regex = null)
+    {
+        $regex = is_array($slug) ? $slug : [$slug => $regex];
+
+        self::$regex = $regex;
 
         return new static;
     }
@@ -282,6 +333,8 @@ class Route
 
         self::setMiddleware($route);
 
+        self::setRegex($route);
+
         return $route;
     }
 
@@ -305,6 +358,32 @@ class Route
             $route->middleware(self::$middleware);
 
             self::$middleware = [];
+
+        }
+
+        return;
+    }
+
+    /**
+     * setRegex
+     *
+     * @param  mixed $route
+     * @return void
+     */
+    private static function setRegex($route)
+    {
+
+        if (self::$groupRegex) {
+
+            $route->match(self::$groupRegex);
+
+        }
+
+        if (self::$regex) {
+
+            $route->match(self::$regex);
+
+            self::$regex = [];
 
         }
 

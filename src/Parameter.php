@@ -7,13 +7,12 @@ namespace Yildirim\Routing;
  */
 class Parameter
 {
-
     /**
-     * value
+     * id
      *
      * @var mixed
      */
-    public $value;
+    public $id;
 
     /**
      * position
@@ -21,6 +20,20 @@ class Parameter
      * @var mixed
      */
     public $position;
+
+    /**
+     * regex
+     *
+     * @var mixed
+     */
+    public $regex;
+
+    /**
+     * value
+     *
+     * @var mixed
+     */
+    public $value;
 
     /**
      * __construct
@@ -32,6 +45,7 @@ class Parameter
     {
         $this->value = $parameter;
         $this->position = $position;
+        $this->id = $this->slugIdentifier();
     }
 
     /**

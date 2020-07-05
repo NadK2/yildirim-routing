@@ -1,15 +1,20 @@
 {
   "name": "yildirim/routing",
-  "description": "A php package to enable request routing",
+  "description": "A Simple PHP routing package.",
+  "keywords": [
+    "router",
+    "routing",
+    "rest"
+  ],
+  "license": "MIT",
   "type": "library",
-  "minimum-stability": "dev",
-  "prefer-stable": true,
   "autoload": {
     "psr-4": {
       "Yildirim\\Routing\\": "src/"
     }
   },
   "require": {
+    "php": "^7.0",
     "yildirim/classes": "dev-master"
   },
   "extra": {

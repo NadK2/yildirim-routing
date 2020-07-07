@@ -38,6 +38,11 @@ class Route
     private static $groupRegex = [];
 
     /**
+     *
+     */
+    private static $globalMiddleware = [];
+
+    /**
      * any
      *
      * @param  mixed $uri
@@ -209,17 +214,25 @@ class Route
     {
         $middleware = is_array($middleware) ? $middleware : func_get_args();
 
-        foreach ($middleware as $m) {
-            if (!class_exists($m)) {
-                throwException('MiddlewareException', "Middleware:['$m'] does not exist");
-            }
-        }
+        // foreach ($middleware as &$m) {
+        //     $m = Router::getMiddlewareNamespace() . $m;
+        //     if (!class_exists($m)) {
+        //         throwException('MiddlewareException', "Middleware:['$m'] does not exist");
+        //     }
+        // }
 
         self::$middleware = array_merge(self::$middleware, $middleware);
 
         return new static;
     }
 
+    /**
+     * match
+     *
+     * @param  mixed $slug
+     * @param  mixed $regex
+     * @return static
+     */
     public static function match($slug, $regex = null)
     {
         $regex = is_array($slug) ? $slug : [$slug => $regex];
@@ -227,6 +240,35 @@ class Route
         self::$regex = $regex;
 
         return new static;
+    }
+
+    /**
+     * globalMiddleware
+     *
+     * @param  mixed $middleware
+     * @param  mixed $clearPrevious
+     * @return void
+     */
+    public static function globalMiddleware($middleware, $clearPrevious = false)
+    {
+        $middleware = is_array($middleware) ? $middleware : [$middleware];
+
+        if ($clearPrevious) {
+            self::$globalMiddleware = [];
+        }
+
+        self::$globalMiddleware = array_merge(self::$globalMiddleware, $middleware);
+
+    }
+
+    /**
+     * clearGlobalMiddleware
+     *
+     * @return void
+     */
+    public static function clearGlobalMiddleware()
+    {
+        return self::$globalMiddleware = [];
     }
 
     /**
@@ -258,8 +300,7 @@ class Route
 
             array_pop($url);
         }
-
-        return '/' . implode("/", $url);
+        return '/' . trim(implode("/", $url), "/");
     }
 
     /**
@@ -346,6 +387,12 @@ class Route
      */
     private static function setMiddleware($route)
     {
+
+        if (self::$globalMiddleware) {
+
+            $route->middleware(self::$globalMiddleware);
+
+        }
 
         if (self::$groupMiddleware) {
 

@@ -12,27 +12,9 @@ Simple PHP Routing without framework.
 
 #### Install with Composer
 
-add to composer.json
-```
-{
- "minimum-stability": "dev",
- "require": {
-  "yildirim/routing": "^1.0"
- }
-}
-```
-run
 ```
 
-$ composer install
-
-```
-
-or 
-
-```
-
-$ composer require yildirim/routing:"^1.0"
+$ composer require yildirim/routing
 
 ```
 

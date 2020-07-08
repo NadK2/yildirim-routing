@@ -59,4 +59,6 @@ Refer to Wiki **[Documentation](https://github.com/NadK2/yildirim-routing/wiki)*
 
 **[Container - Dependency Injection](https://github.com/NadK2/yildirim-routing/wiki/3.-Dependency-Injection)**
 
+**[Custom Classes](https://github.com/NadK2/yildirim-routing/wiki/4.-Custom-Classes)**
+
 **[Helper Functions](https://github.com/NadK2/yildirim-routing/wiki/Helper-Functions)**

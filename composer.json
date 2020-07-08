@@ -15,9 +15,8 @@
   },
   "require": {
     "php": "^7.0",
-    "yildirim/classes": "dev-master"
+    "yildirim/classes": "^1.0"
   },
-  "minimum-stability": "dev",
   "extra": {
     "branch-alias": {
       "dev-master": "1.0-dev"

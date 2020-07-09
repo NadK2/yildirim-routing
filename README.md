@@ -12,27 +12,9 @@ Simple PHP Routing without framework.
 
 #### Install with Composer
 
-add to composer.json
-```
-{
- "minimum-stability": "dev",
- "require": {
-  "yildirim/routing": "^1.0"
- }
-}
-```
-run
 ```
 
-$ composer install
-
-```
-
-or 
-
-```
-
-$ composer require yildirim/routing:"^1.0"
+$ composer require yildirim/routing
 
 ```
 
@@ -76,5 +58,7 @@ Refer to Wiki **[Documentation](https://github.com/NadK2/yildirim-routing/wiki)*
 **[Middleware](https://github.com/NadK2/yildirim-routing/wiki/2.-Middleware)**
 
 **[Container - Dependency Injection](https://github.com/NadK2/yildirim-routing/wiki/3.-Dependency-Injection)**
+
+**[Custom Classes](https://github.com/NadK2/yildirim-routing/wiki/4.-Custom-Classes)**
 
 **[Helper Functions](https://github.com/NadK2/yildirim-routing/wiki/Helper-Functions)**

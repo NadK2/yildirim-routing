@@ -2,8 +2,6 @@
 
 namespace Yildirim\Routing;
 
-use Yildirim\Classes\Request;
-
 /**
  *
  */
@@ -92,7 +90,7 @@ class Router
      */
     private static function invokeRouteHandler($route)
     {
-        $params = request()->getRouteParameters();
+        $params = request()->route()->parameters();
 
         if (isset($route->callable)) {
 
@@ -168,7 +166,7 @@ class Router
                     throwException('MethodNotAllowed', "Method [ '" . request()->method() . "' ] is not allowed for route [ '" . request()->uri() . "' ]", 405);
                 }
 
-                request()->setRouteParameters($route->getSlugValues($path));
+                app()->setInstance(RequestRoute::class, new RequestRoute($route, $path));
 
                 return $route;
             }

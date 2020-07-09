@@ -43,6 +43,16 @@ class Route
     private static $globalMiddleware = [];
 
     /**
+     *
+     */
+    private static $groupName = [];
+
+    /**
+     *
+     */
+    private static $name = [];
+
+    /**
      * any
      *
      * @param  mixed $uri
@@ -178,6 +188,10 @@ class Route
         $newRegex = self::$regex ? true : false;
         self::$regex = [];
 
+        self::$groupName = array_merge(self::$groupName, self::$name);
+        $newName = self::$name ? true : false;
+        self::$name = [];
+
         //invoke group callback.
         $callback();
 
@@ -189,6 +203,10 @@ class Route
 
         if ($newRegex) {
             array_pop(self::$groupRegex);
+        }
+
+        if ($newName) {
+            array_pop(self::$groupName);
         }
 
         return;
@@ -238,6 +256,20 @@ class Route
         $regex = is_array($slug) ? $slug : [$slug => $regex];
 
         self::$regex = $regex;
+
+        return new static;
+    }
+
+    /**
+     * name
+     *
+     * @param  mixed $name
+     * @return static
+     */
+    public static function name($name)
+    {
+
+        self::$name[] = $name;
 
         return new static;
     }
@@ -376,6 +408,8 @@ class Route
 
         self::setRegex($route);
 
+        self::setName($route);
+
         return $route;
     }
 
@@ -431,6 +465,33 @@ class Route
             $route->match(self::$regex);
 
             self::$regex = [];
+
+        }
+
+        return;
+    }
+
+    /**
+     * setName
+     *
+     * @param  mixed $route
+     * @return void
+     */
+    private static function setName($route)
+    {
+        self::$name = [];
+
+        if (self::$groupName) {
+
+            $route->name(implode("", self::$groupName));
+
+        }
+
+        if (self::$name) {
+
+            $route->name(implode("", self::$name));
+
+            self::$name = [];
 
         }
 

@@ -10,6 +10,8 @@ use Exception;
 class Path
 {
 
+    public $name = '';
+
     /**
      * __construct
      *
@@ -83,6 +85,19 @@ class Path
 
             $param->regex = $regex;
         }
+
+        return $this;
+    }
+
+    /**
+     * name
+     *
+     * @param  mixed $name
+     * @return static
+     */
+    public function name($name)
+    {
+        $this->name .= $name;
 
         return $this;
     }

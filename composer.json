@@ -10,12 +10,15 @@
   "type": "library",
   "autoload": {
     "psr-4": {
-      "Yildirim\\Routing\\": "src/"
-    }
+      "Yildirim\\Routing\\": "src/classes/"
+    },
+    "files": [
+      "src/functions.php"
+    ]
   },
   "require": {
     "php": "^7.0",
-    "yildirim/classes": "^1.0"
+    "yildirim/classes": "^1.1"
   },
   "extra": {
     "branch-alias": {

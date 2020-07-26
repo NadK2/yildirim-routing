@@ -2,11 +2,14 @@
 
 namespace Yildirim\Routing;
 
+use Yildirim\Routing\Middleware\PostMiddleware;
+
 /**
  * Route
  */
 class Route
 {
+
     /**
      *
      */
@@ -53,6 +56,11 @@ class Route
     private static $name = [];
 
     /**
+     *
+     */
+    private static $csrfEnabled = false;
+
+    /**
      * any
      *
      * @param  mixed $uri
@@ -97,6 +105,10 @@ class Route
      */
     public static function post($uri, $handler)
     {
+        if (Router::$csrfEnabled) {
+            self::middleware(PostMiddleware::class);
+        }
+
         return self::addRoute('POST', $uri, $handler);
     }
 
@@ -231,13 +243,6 @@ class Route
     public static function middleware($middleware)
     {
         $middleware = is_array($middleware) ? $middleware : func_get_args();
-
-        // foreach ($middleware as &$m) {
-        //     $m = Router::getMiddlewareNamespace() . $m;
-        //     if (!class_exists($m)) {
-        //         throwException('MiddlewareException', "Middleware:['$m'] does not exist");
-        //     }
-        // }
 
         self::$middleware = array_merge(self::$middleware, $middleware);
 

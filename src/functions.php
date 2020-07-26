@@ -16,3 +16,15 @@ if (!function_exists('request')) {
         return $key ? (app('request')->{$key} ?: $defualt): app('request');
     }
 }
+
+if (!function_exists('csrf')) {
+    /**
+     * csrf
+     *
+     * @return string
+     */
+    function csrf()
+    {
+        return session()->csrf();
+    }
+}

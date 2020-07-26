@@ -13,6 +13,13 @@ class RequestRoute
     private $attributes = [];
 
     /**
+     * route
+     *
+     * @var array
+     */
+    private $route = [];
+
+    /**
      * __construct
      *
      * @param  mixed $route
@@ -27,13 +34,6 @@ class RequestRoute
         $this->attributes = collect((array) $route)->except('parameters', 'callable', 'controller', 'function');
 
     }
-
-    /**
-     * route
-     *
-     * @var array
-     */
-    private $route = [];
 
     /**
      * setRouteParameters
@@ -82,14 +82,24 @@ class RequestRoute
     }
 
     /**
-     * get
+     * attribute
      *
      * @param  mixed $key
      * @return mixed
      */
-    public function get($key)
+    public function attribute($key)
     {
         return $this->attributes[$key] ?? null;
+    }
+
+    /**
+     * attributes
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return $this->attributes ?: [];
     }
 
 }

@@ -40,6 +40,16 @@ class Request implements Jsonable, Arrayable
     }
 
     /**
+     * isAjax
+     *
+     * @return void
+     */
+    public function isAjax()
+    {
+        return 'xmlhttprequest' == strtolower(server('HTTP_X_REQUESTED_WITH'));
+    }
+
+    /**
      * server
      *
      * @param  mixed $key
@@ -95,6 +105,17 @@ class Request implements Jsonable, Arrayable
     public function ip()
     {
         return server()->ip();
+    }
+
+    /**
+     * has
+     *
+     * @param  mixed $key
+     * @return bool
+     */
+    public function has($key)
+    {
+        return isset($this->attributes[$key]);
     }
 
 }

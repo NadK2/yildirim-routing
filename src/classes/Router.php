@@ -23,6 +23,13 @@ class Router
     private static $middlewareNamespace = '';
 
     /**
+     * csrfEnabled
+     *
+     * @var bool
+     */
+    public static $csrfEnabled = false;
+
+    /**
      * processRequest
      *
      * @return Response

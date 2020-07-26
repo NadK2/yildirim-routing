@@ -3,6 +3,7 @@
 namespace Yildirim\Routing;
 
 use Exception;
+use Yildirim\Routing\Middleware\PostMiddleware;
 
 /**
  *
@@ -51,7 +52,11 @@ class Path
         $middleware = is_array($middleware) ? $middleware : func_get_args();
 
         foreach ($middleware as &$m) {
-            $m = Router::getMiddlewareNamespace() . $m;
+
+            if ($m != PostMiddleware::class) {
+                $m = Router::getMiddlewareNamespace() . $m;
+            }
+
             if (!class_exists($m)) {
                 throw new Exception("Middleware:['$m'] attached to Route:['$this->uri'] does not exist");
             }
@@ -63,7 +68,7 @@ class Path
     }
 
     /**
-     * must
+     * match
      *
      * @param  mixed $slug
      * @param  mixed $regex

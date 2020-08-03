@@ -7,7 +7,7 @@ use Yildirim\Routing\Middleware\PostMiddleware;
 /**
  * Route
  */
-class Route
+class RouteBuilder
 {
 
     /**
@@ -484,7 +484,6 @@ class Route
      */
     private static function setName($route)
     {
-        self::$name = [];
 
         if (self::$groupName) {
 
@@ -551,6 +550,46 @@ class Route
                 throwException('RouteHandlerException', 'Route [ ' . $route->uri . ' ]  optional slug [ ' . $slug->value . ' ] is missing default value in handler');
             }
         }
+
+    }
+
+    /**
+     * reverseRouteLookup
+     *
+     * @param  string $name
+     * @param  array $paramters
+     * @return string
+     */
+    public static function reverseRouteLookup($name, $parameters = [])
+    {
+        $path = collect(self::$routes)->first(function ($route) use ($name) {
+            return $name == $route->name;
+        });
+
+        if (!$path) {
+            throwException("RouteException", "Route with name [ $name ] not found");
+        }
+
+        //has no slugs.
+        if (!$path->slugs()->count()) {
+            return $path->uri;
+        }
+
+        $uri = [];
+
+        foreach ($path->parameters->toArray() as $param) {
+
+            if ($param->id) {
+                if (!isset($parameters[$param->id])) {
+                    throwException("RouteException", 'Route is missing [ ' . $param->id . ' ] argument');
+                }
+                $uri[] = $parameters[$param->id];
+            } else {
+                $uri[] = $param->value;
+            }
+        }
+
+        return implode("/", $uri);
 
     }
 

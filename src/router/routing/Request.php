@@ -19,6 +19,20 @@ class Request implements Jsonable, Arrayable
     protected $attributes = [];
 
     /**
+     * headers
+     *
+     * @var array
+     */
+    private $headers = [];
+
+    /**
+     * user
+     *
+     * @var undefined
+     */
+    private $user = null;
+
+    /**
      * route
      *
      * @var Yildirim\Routing\RequestRoute
@@ -102,7 +116,7 @@ class Request implements Jsonable, Arrayable
      *
      * @return void
      */
-    public function ip()
+    public function userIP()
     {
         return server()->ip();
     }
@@ -118,4 +132,52 @@ class Request implements Jsonable, Arrayable
         return isset($this->attributes[$key]);
     }
 
+    /**
+     * headers
+     *
+     * @return array
+     */
+    public function headers()
+    {
+        if (!$this->headers) {
+            foreach (server()->toArray() as $header => $value) {
+                if (substr($header, 0, 5) == "HTTP_") {
+                    $this->headers[str_replace(" ", "-", ucwords(str_replace("_", " ", strtolower(substr($header, 5)))))] = $value;
+                }
+            }
+        }
+
+        return $this->headers;
+    }
+
+    /**
+     * header
+     *
+     * @param  mixed $key
+     * @return mixed
+     */
+    public function header($key)
+    {
+        return $this->headers()[$key] ?? null;
+    }
+
+    /**
+     * setUser
+     *
+     * @return void
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * user
+     *
+     * @return mixed
+     */
+    public function user()
+    {
+        return $this->user;
+    }
 }

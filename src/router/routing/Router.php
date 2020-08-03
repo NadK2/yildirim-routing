@@ -41,52 +41,56 @@ class Router
         $route = self::resolveRoute();
 
         if (!$route) {
-            throwException('RouteException', "Page [" . request()->uri() . "] not found", 404);
+            error(404);
+            return;
         }
 
-        //run route middleware.
-        self::runMiddleware($route);
+        //process route with middleware.
+        $response = self::processRequestWithMiddleware($route);
 
-        //execute the route function.
-        $response = self::invokeRouteHandler($route);
-
-        //return the response
-        if (app()->has('response')) {
-            return app('response', [$response]);
-        }
-
-        return new Response($response);
+        return $response;
     }
 
     /**
-     * runMiddleware
+     * processRequestWithMiddleware
      *
      * @param  mixed $route
      * @return void
      */
-    private static function runMiddleware($route)
+    private static function processRequestWithMiddleware($route)
     {
-        //get the Request Instance
-        $request = request();
 
+        $middleware = [];
         foreach ($route->middleware ?? [] as $m) {
-            $middleware = new $m();
+            $m = new $m();
 
-            if (!method_exists($middleware, 'run')) {
-                throwException('MiddlewareException', "Middleware [ $m ] is missing [ run ] method");
+            if (!method_exists($m, 'run')) {
+                throwException('MiddlewareException', "Middleware [ " . get_class($m) . " ] is missing [ run ] method");
             }
 
-            $request = $middleware->run($request);
-
-            if (!$request instanceof Request) {
-                throwException('MiddlewareException', "Middleware [ $m ] method [ run ] must return an instance of [ " . get_class(request()) . " ]");
-            }
+            $middleware[] = $m;
         }
 
-        //replace Request with updated instance.
-        app()->setInstance('request', $request);
+        //add middleware around the route handler.
+        $routeWithMiddleware = array_reduce($middleware ?? [], function ($next, $current) {
+            return self::createMiddleware($next, $current);
+        }, function ($request) use ($route) {
 
-        return;
+            app()->setInstance('request', $request);
+
+            $response = self::invokeRouteHandler($route, $request);
+
+            //return the response
+            if (app()->has('response')) {
+                return app('response', [$response]);
+            }
+
+            return new Response($response);
+
+        });
+
+        //execute middleware and route.
+        return $routeWithMiddleware(request());
     }
 
     /**
@@ -95,9 +99,9 @@ class Router
      * @param  mixed $route
      * @return mixed string|object
      */
-    private static function invokeRouteHandler($route)
+    private static function invokeRouteHandler($route, $request)
     {
-        $params = request()->route()->parameters();
+        $params = $request->route()->parameters();
 
         if (isset($route->callable)) {
 
@@ -170,7 +174,8 @@ class Router
             if (RouteMatcher::matches($route, $path)) {
 
                 if ($route->method != "ANY" && $route->method != request()->method()) {
-                    throwException('MethodNotAllowed', "Method [ '" . request()->method() . "' ] is not allowed for route [ '" . request()->uri() . "' ]", 405);
+                    error(405);
+                    // throwException('MethodNotAllowed', "Method [ '" . request()->method() . "' ] is not allowed for route [ '" . request()->uri() . "' ]", 405);
                 }
 
                 app()->setInstance(RequestRoute::class, new RequestRoute($route, $path));
@@ -182,4 +187,17 @@ class Router
         return false;
     }
 
+    /**
+     * createLayer
+     *
+     * @param  mixed $nextLayer
+     * @param  mixed $layer
+     * @return void
+     */
+    private static function createMiddleware($next, $middleware)
+    {
+        return function ($request) use ($next, $middleware) {
+            return $middleware->run($request, $next);
+        };
+    }
 }

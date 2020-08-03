@@ -27,6 +27,8 @@ The most basic usage is to add a route with a closure.
 
 use Yildirim\Routing\Route;
 
+require_once './vendor/autoload.php';
+
 Route::get('/',function(){
     return '<h1>Hello World</h1>';
 });

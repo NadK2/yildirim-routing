@@ -18,7 +18,27 @@ $ composer require yildirim/routing
 
 ```
 
-## Basic usage
+## Usage
+
+Add a .htaccess file to your project root, this will redirect all requests to index.php.
+
+```.htaccess
+DirectoryIndex index.php
+
+# enable apache rewrite engine
+RewriteEngine on
+
+# set your rewrite base
+# Edit this in your init method too if you script lives in a subfolder
+RewriteBase /
+
+# Deliver the folder or file directly if it exists on the server
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+ 
+# Push every request to index.php
+RewriteRule ^(.*)$ index.php [QSA]
+```
 
 The most basic usage is to add a route with a closure.
 

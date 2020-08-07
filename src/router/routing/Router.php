@@ -64,8 +64,8 @@ class Router
         foreach ($route->middleware ?? [] as $m) {
             $m = new $m();
 
-            if (!method_exists($m, 'run')) {
-                throwException('MiddlewareException', "Middleware [ " . get_class($m) . " ] is missing [ run ] method");
+            if (!method_exists($m, 'handle')) {
+                throwException('MiddlewareException', "Middleware [ " . get_class($m) . " ] is missing [ handle ] method");
             }
 
             $middleware[] = $m;
@@ -197,7 +197,7 @@ class Router
     private static function createMiddleware($next, $middleware)
     {
         return function ($request) use ($next, $middleware) {
-            return $middleware->run($request, $next);
+            return $middleware->handle($request, $next);
         };
     }
 }

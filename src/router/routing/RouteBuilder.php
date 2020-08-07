@@ -149,6 +149,22 @@ class RouteBuilder
     }
 
     /**
+     * resource
+     *
+     * @return void
+     */
+    public static function resource($uri, $handler)
+    {
+        return self::group($uri, function () use ($handler) {
+            self::get("", $handler . "@index");
+            self::post("", $handler . "@create");
+            self::get('/{id}', $handler . "@show");
+            self::post('/{id}', $handler . "@update");
+            self::delete('/{id}', $handler . "@destroy");
+        });
+    }
+
+    /**
      * addRoute
      *
      * @param  mixed $method

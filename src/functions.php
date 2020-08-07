@@ -79,18 +79,6 @@ if (!function_exists('server')) {
     }
 }
 
-if (!function_exists('root_path')) {
-    /**
-     * root_path
-     *
-     * @return string
-     */
-    function root_path()
-    {
-        return server()->document_root();
-    }
-}
-
 if (!function_exists('throwException')) {
 
     /**

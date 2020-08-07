@@ -93,6 +93,16 @@ class Route
     }
 
     /**
+     * resource
+     *
+     * @return void
+     */
+    public static function resource($uri, $handler)
+    {
+        return RouteBuilder::resource($uri, $handler);
+    }
+
+    /**
      * group
      *
      * @param  mixed $uri

@@ -72,7 +72,7 @@ class Router
         }
 
         //add middleware around the route handler.
-        $routeWithMiddleware = array_reduce($middleware ?? [], function ($next, $current) {
+        $routeWithMiddleware = array_reduce(array_reverse($middleware) ?? [], function ($next, $current) {
             return self::createMiddleware($next, $current);
         }, function ($request) use ($route) {
 

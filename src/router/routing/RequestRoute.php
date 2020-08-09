@@ -15,7 +15,7 @@ class RequestRoute
     /**
      * route
      *
-     * @var array
+     * @var mixed
      */
     private $route = [];
 

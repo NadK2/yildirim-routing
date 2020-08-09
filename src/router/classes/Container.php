@@ -42,9 +42,7 @@ class Container
 
         //if the object is aliased the namespace path is also registered.
         if (is_object($instance)) {
-            if (!$this->has(get_class($instance))) {
-                $this->instances[get_class($instance)] = function () use ($instance) {return $instance;};
-            }
+            $this->instances[get_class($instance)] = function () use ($instance) {return $instance;};
         }
 
     }

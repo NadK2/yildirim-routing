@@ -43,22 +43,6 @@ if (!function_exists('collect')) {
     }
 }
 
-if (!function_exists('dd')) {
-
-    /**
-     * dd
-     *
-     * @return void
-     */
-    function dd(...$vars)
-    {
-        array_map(function ($x) {
-            dump($x);
-        }, func_get_args());
-        die;
-    }
-}
-
 if (!function_exists('server')) {
 
     /**
@@ -151,21 +135,5 @@ if (!function_exists('route')) {
     function route($name, $parameters = [])
     {
         return RouteBuilder::reverseRouteLookup($name, $parameters);
-    }
-}
-
-if (!function_exists('error')) {
-
-    function error($code)
-    {
-        if (file_exists(__DIR__ . "/pages/{$code}.php")) {
-            $file = file_get_contents(__DIR__ . "/pages/{$code}.php");
-        } else {
-            $file = file_get_contents(__DIR__ . "/pages/oops.php");
-        }
-
-        http_response_code($code);
-        echo $file;
-        exit;
     }
 }

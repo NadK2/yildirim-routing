@@ -41,7 +41,8 @@ class Router
         $route = self::resolveRoute();
 
         if (!$route) {
-            error(404);
+            http_response_code(404);
+            throwException('RouteNotFoundException', "Route [ '" . request()->uri() . "' ] Not Found", 404);
             return;
         }
 
@@ -49,6 +50,7 @@ class Router
         $response = self::processRequestWithMiddleware($route);
 
         return $response;
+
     }
 
     /**
@@ -174,8 +176,8 @@ class Router
             if (RouteMatcher::matches($route, $path)) {
 
                 if ($route->method != "ANY" && $route->method != request()->method()) {
-                    error(405);
-                    // throwException('MethodNotAllowed', "Method [ '" . request()->method() . "' ] is not allowed for route [ '" . request()->uri() . "' ]", 405);
+                    http_response_code(405);
+                    throwException('MethodNotAllowed', "Method [ '" . request()->method() . "' ] is not allowed for route [ '" . request()->uri() . "' ]", 405);
                 }
 
                 app()->setInstance(RequestRoute::class, new RequestRoute($route, $path));

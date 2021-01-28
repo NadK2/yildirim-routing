@@ -143,7 +143,7 @@ class Collection implements ArrayAccess, Iterator, Jsonable, Arrayable
      * map
      *
      * @param  mixed $callback
-     * @return void
+     * @return static
      */
     public function map(callable $callback)
     {
@@ -178,7 +178,7 @@ class Collection implements ArrayAccess, Iterator, Jsonable, Arrayable
     /**
      * values
      *
-     * @return void
+     * @return Static
      */
     public function values()
     {
@@ -199,6 +199,16 @@ class Collection implements ArrayAccess, Iterator, Jsonable, Arrayable
         } else {
             $this->items[] = $key;
         }
+    }
+
+    /**
+     * implode
+     *
+     * @return string
+     */
+    public function implode($glue = "")
+    {
+        return implode($glue, $this->items);
     }
 
     /**
@@ -305,8 +315,23 @@ class Collection implements ArrayAccess, Iterator, Jsonable, Arrayable
      *
      * @return array
      */
-    public function toArray()
+    public function toArray($options = [])
     {
+
+        // if ($options['response'] ?? null) {
+
+        //     return $this->map(function ($item) {
+        //         if ($item instanceof Arrayable) {
+        //             return $item->toArray();
+        //         }
+        //         if ($item instanceof Jsonable) {
+        //             return $item->toJson();
+        //         }
+        //         return $item;
+        //     });
+
+        // }
+
         return $this->items;
     }
 
@@ -315,9 +340,9 @@ class Collection implements ArrayAccess, Iterator, Jsonable, Arrayable
      *
      * @return string
      */
-    public function toJson()
+    public function toJson($options = [])
     {
-        return json_encode($this->toArray());
+        return json_encode($this->toArray($options));
     }
 
     /**

@@ -83,7 +83,7 @@ trait HasAttributes
     /**
      * original
      *
-     * @return void
+     * @return mixed
      */
     public function original($key = null, $default = null)
     {

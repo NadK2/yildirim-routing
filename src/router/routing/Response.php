@@ -87,7 +87,7 @@ class Response
     }
 
     /**
-     * isTypeJson
+     * getContentType
      *
      * @return void
      */
@@ -113,12 +113,12 @@ class Response
 
         if ($this->body instanceof Jsonable) {
 
-            $this->body = $this->body->toJson();
+            $this->body = $this->body->toJson(['response' => true]);
             return true;
 
         } elseif ($this->body instanceof Arrayable) {
 
-            $this->body = json_encode($this->body->toArray());
+            $this->body = json_encode($this->body->toArray(['response' => true]));
             return true;
 
         } else if (is_array($this->body)) {

@@ -3,6 +3,7 @@
 namespace Yildirim\Routing;
 
 use Yildirim\Routing\Middleware\PostMiddleware;
+use Yildirim\Routing\Middleware\PutMiddleware;
 
 /**
  * Route
@@ -121,6 +122,7 @@ class RouteBuilder
      */
     public static function put($uri, $handler)
     {
+        self::middleware(PutMiddleware::class);
         return self::addRoute('PUT', $uri, $handler);
     }
 

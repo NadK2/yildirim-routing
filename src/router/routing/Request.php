@@ -47,10 +47,8 @@ class Request implements Jsonable, Arrayable
      */
     public function __construct($attributes = [])
     {
-        foreach ($attributes ?: $_REQUEST as $key => $val) {
-            $this->{$key} = $val;
-        }
-
+        $this->parseHeaders();
+        $this->getRequestData($attributes);
     }
 
     /**
@@ -139,14 +137,6 @@ class Request implements Jsonable, Arrayable
      */
     public function headers()
     {
-        if (!$this->headers) {
-            foreach (server()->toArray() as $header => $value) {
-                if (substr($header, 0, 5) == "HTTP_") {
-                    $this->headers[str_replace(" ", "-", ucwords(str_replace("_", " ", strtolower(substr($header, 5)))))] = $value;
-                }
-            }
-        }
-
         return $this->headers;
     }
 
@@ -158,7 +148,7 @@ class Request implements Jsonable, Arrayable
      */
     public function header($key)
     {
-        return $this->headers()[$key] ?? null;
+        return $this->headers()[strtolower($key)] ?? null;
     }
 
     /**
@@ -179,5 +169,32 @@ class Request implements Jsonable, Arrayable
     public function user()
     {
         return $this->user;
+    }
+
+    /**
+     * parseHeaders
+     *
+     * @return void
+     */
+    private function parseHeaders()
+    {
+        foreach (server()->toArray() as $header => $value) {
+            if (substr($header, 0, 5) == "HTTP_") {
+                $this->headers[str_replace(" ", "-", (str_replace("_", " ", strtolower(substr($header, 5)))))] = $value;
+            }
+        }
+    }
+
+    /**
+     * getRequestData
+     *
+     * @param  mixed $attributes
+     * @return void
+     */
+    private function getRequestData($attributes)
+    {
+        foreach ($attributes ?: $_REQUEST as $key => $val) {
+            $this->{$key} = $val;
+        }
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Yildirim\Routing\Middleware;
 
-class PostMiddleware
+use Yildirim\Interfaces\Middleware;
+
+class PostMiddleware implements Middleware
 {
 
     /**
@@ -11,14 +13,14 @@ class PostMiddleware
      * @param  mixed $request
      * @return void
      */
-    public function handle($request)
+    public function handle($request, $next)
     {
         if (!$request->has('csrf_token') || $request->csrf_token != session('post_csrf')) {
             http_response_code(403);
             throwException('CsrfException', 'csrf token mismatch', 403);
         }
 
-        return $request;
+        return $next($request);
     }
 
 }

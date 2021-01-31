@@ -34,7 +34,7 @@ trait HasAttributes
     {
         $this->attributes[$key] = $val;
 
-        if (debug_backtrace()[1]['function'] == "__construct") {
+        if ($this->original[$key] ?? null) {
             $this->original[$key] = $val;
         }
     }
@@ -42,7 +42,7 @@ trait HasAttributes
     /**
      * toArray
      *
-     * @return void
+     * @return array
      */
     public function toArray()
     {

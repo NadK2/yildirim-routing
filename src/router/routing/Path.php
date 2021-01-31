@@ -4,6 +4,7 @@ namespace Yildirim\Routing;
 
 use Exception;
 use Yildirim\Routing\Middleware\PostMiddleware;
+use Yildirim\Routing\Middleware\PutMiddleware;
 
 /**
  *
@@ -53,7 +54,7 @@ class Path
 
         foreach ($middleware as &$m) {
 
-            if ($m != PostMiddleware::class) {
+            if ($m != PostMiddleware::class && $m != PutMiddleware::class) {
                 $m = Router::getMiddlewareNamespace() . $m;
             }
 

@@ -2,6 +2,7 @@
 
 namespace Yildirim\Routing;
 
+use Yildirim\Routing\Exceptions\RouteException;
 use Yildirim\Routing\Middleware\PostMiddleware;
 use Yildirim\Routing\Middleware\PutMiddleware;
 
@@ -135,6 +136,7 @@ class RouteBuilder
      */
     public static function patch($uri, $handler)
     {
+        self::middleware(PutMiddleware::class);
         return self::addRoute('PATCH', $uri, $handler);
     }
 
@@ -179,7 +181,7 @@ class RouteBuilder
         $attributes = self::buildRouteAttributes($uri, $method, $handler);
 
         if (isset(self::$routes[self::getRouteKey($attributes)])) {
-            throwException('RouteException', "Route [" . self::getRouteKey($attributes) . "] has already been defined");
+            throw new RouteException("Route [" . self::getRouteKey($attributes) . "] has already been defined");
         }
 
         $route = self::createPathWithAttributes($attributes);
@@ -389,16 +391,16 @@ class RouteBuilder
             if (class_exists($attributes['controller'])) {
                 $controller = new \ReflectionClass($attributes['controller']);
             } else {
-                throwException('RouteHandlerException', "Controller [ $attributes[controller] ] for route [ $attributes[uri] ] is not resolvable");
+                throw new RouteException("Controller [ $attributes[controller] ] for route [ $attributes[uri] ] is not resolvable");
             }
 
             if (!$controller->hasMethod($attributes['function'])) {
-                throwException('RouteHandlerException', "Method [ $attributes[controller]@$attributes[function] ] for route [ $attributes[uri] ] is not resolvable");
+                throw new RouteException("Method [ $attributes[controller]@$attributes[function] ] for route [ $attributes[uri] ] is not resolvable");
             }
 
         } else {
             //not recognised.
-            throwException('RouteHandlerException', "handler ['$handler'] for route [ $attributes[uri] ] is not resolvable");
+            throw new RouteException("handler ['$handler'] for route [ $attributes[uri] ] is not resolvable");
         }
 
         return $attributes;
@@ -565,7 +567,7 @@ class RouteBuilder
             $slug = $route->getSlugAtPosition($pos++);
 
             if ($slug && $slug->isOptional() && !$param->isDefaultValueAvailable()) {
-                throwException('RouteHandlerException', 'Route [ ' . $route->uri . ' ]  optional slug [ ' . $slug->value . ' ] is missing default value in handler');
+                throw new RouteException('Route [ ' . $route->uri . ' ]  optional slug [ ' . $slug->value . ' ] is missing default value in handler');
             }
         }
 
@@ -585,7 +587,7 @@ class RouteBuilder
         });
 
         if (!$path) {
-            throwException("RouteException", "Route with name [ $name ] not found");
+            throw new RouteException("Route with name [ $name ] not found");
         }
 
         //has no slugs.
@@ -599,7 +601,7 @@ class RouteBuilder
 
             if ($param->id) {
                 if (!isset($parameters[$param->id])) {
-                    throwException("RouteException", 'Route is missing [ ' . $param->id . ' ] argument');
+                    throw new RouteException('Route is missing [ ' . $param->id . ' ] argument');
                 }
                 $uri[] = $parameters[$param->id];
             } else {

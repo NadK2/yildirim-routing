@@ -28,6 +28,9 @@ class Collection implements ArrayAccess, Iterator, Jsonable, Arrayable
      */
     public function __construct($data = [])
     {
+        if (method_exists($data, 'toArray')) {
+            $data = $data->toArray();
+        }
         $this->items = $data;
     }
 
@@ -317,22 +320,9 @@ class Collection implements ArrayAccess, Iterator, Jsonable, Arrayable
      */
     public function toArray($options = [])
     {
-
-        // if ($options['response'] ?? null) {
-
-        //     return $this->map(function ($item) {
-        //         if ($item instanceof Arrayable) {
-        //             return $item->toArray();
-        //         }
-        //         if ($item instanceof Jsonable) {
-        //             return $item->toJson();
-        //         }
-        //         return $item;
-        //     });
-
-        // }
-
-        return $this->items;
+        return array_map(function ($item) {
+            return $this->getArrayValues($item);
+        }, $this->items);
     }
 
     /**
@@ -353,6 +343,31 @@ class Collection implements ArrayAccess, Iterator, Jsonable, Arrayable
     public function __toString()
     {
         return $this->toJson();
+    }
+
+    /**
+     * getArrayValues
+     *
+     * @return void
+     */
+    private function getArrayValues($item)
+    {
+
+        if ($item instanceof Arrayable) {
+            return $item->toArray();
+        }
+
+        if ($item instanceof Jsonable) {
+            return $item->toJson();
+        }
+
+        if (is_array($item)) {
+            foreach ($item as &$i) {
+                $i = $this->getArrayValues($i);
+            }
+        }
+
+        return $item;
     }
 
 }

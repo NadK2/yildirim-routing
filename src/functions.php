@@ -1,5 +1,6 @@
 <?php
 
+use Yildirim\Routing\Response;
 use Yildirim\Routing\RouteBuilder;
 
 $yildirim_container = null;
@@ -63,23 +64,6 @@ if (!function_exists('server')) {
     }
 }
 
-if (!function_exists('throwException')) {
-
-    /**
-     * throwException
-     *
-     * @param  string $type
-     * @param  string $message
-     * @param  int $code
-     * @param  mixed $previous
-     * @return Yildirim\Classes\Exception
-     */
-    function throwException($type = 'Exception', $message = '', $code = 0, $previous = null)
-    {
-        return new Yildirim\Classes\Exception($type, $message, $code, $previous);
-    }
-}
-
 if (!function_exists('session')) {
     /**
      * session
@@ -135,5 +119,23 @@ if (!function_exists('route')) {
     function route($name, $parameters = [])
     {
         return RouteBuilder::reverseRouteLookup($name, $parameters);
+    }
+}
+
+if (!function_exists('response')) {
+    /**
+     * response
+     *
+     * @param  mixed $response
+     * @param  mixed $headers
+     * @return mixed
+     */
+    function response(string $response = '')
+    {
+        if (!app()->has('response')) {
+            app()->set('response', Response::class);
+        }
+
+        return app('response', [$response]);
     }
 }

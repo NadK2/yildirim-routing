@@ -1,12 +1,8 @@
 <?php
 namespace Yildirim\Classes;
 
-use Yildirim\Traits\HasAttributes;
-
 class Session
 {
-
-    use HasAttributes;
 
     /**
      * __construct
@@ -16,7 +12,7 @@ class Session
      */
     public function __construct()
     {
-        session_start();
+        @session_start();
     }
 
     /**
@@ -77,4 +73,67 @@ class Session
         return isset($_SESSION[$key]);
     }
 
+    /**
+     * all
+     *
+     * @return array
+     */
+    public function all()
+    {
+        return $_SESSION;
+    }
+
+    /**
+     * count
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($_SESSION);
+    }
+
+    /**
+     * toArray
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->all();
+    }
+
+    /**
+     * toJson
+     *
+     * @return string
+     */
+    public function toJson()
+    {
+        return json_encode($this->toArray());
+    }
+
+    /**
+     * __toString
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toJson();
+    }
+
+    /**
+     * pull
+     *
+     * @param  mixed $key
+     * @param  mixed $default
+     * @return mixed
+     */
+    public function pull($key, $default = null)
+    {
+        $val = $this->get($key, $default);
+        $this->forget($key);
+        return $val;
+    }
 }

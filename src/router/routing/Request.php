@@ -40,6 +40,13 @@ class Request implements Jsonable, Arrayable
     private $route;
 
     /**
+     * files
+     *
+     * @var array
+     */
+    private $files = [];
+
+    /**
      * __construct
      *
      * @param  mixed $attributes
@@ -196,5 +203,37 @@ class Request implements Jsonable, Arrayable
         foreach ($attributes ?: $_REQUEST as $key => $val) {
             $this->{$key} = $val;
         }
+    }
+
+    /**
+     * hasFile
+     *
+     * @param  mixed $filename
+     * @return mixed
+     */
+    public function hasFile($key)
+    {
+        return isset($this->files[$key]);
+    }
+
+    /**
+     * files
+     *
+     * @return array
+     */
+    public function files()
+    {
+        return collect($_FILES);
+    }
+
+    /**
+     * file
+     *
+     * @param  mixed $filename
+     * @return void
+     */
+    public function file($key)
+    {
+        return $_FILES[$key] ?? null;
     }
 }

@@ -33,18 +33,6 @@ class Route
     }
 
     /**
-     * options
-     *
-     * @param  mixed $uri
-     * @param  mixed $handler
-     * @return void
-     */
-    public static function options($uri, $handler)
-    {
-        return RouteBuilder::options($uri, $handler);
-    }
-
-    /**
      * post
      *
      * @param  mixed $uri

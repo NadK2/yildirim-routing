@@ -2,6 +2,7 @@
 
 namespace Yildirim\Classes;
 
+use Yildirim\Classes\Exceptions\ContainerException;
 use Yildirim\Routing\Router;
 
 /**
@@ -144,8 +145,7 @@ class Container
 
                 } else {
                     //if parameter cannot be resolved
-                    throwException('ContainerException', "Can not resolve class dependency {$parameter->name}");
-
+                    throw new ContainerException("Can not resolve class dependency {$parameter->name}");
                 }
 
             } else {
@@ -179,7 +179,7 @@ class Container
     public function resolveFunction($closure, $parameters)
     {
         if (!is_callable($closure)) {
-            throwException('SomeError', 'An Error has occurred');
+            throw new ContainerException('Handler is not valid closure.');
         }
 
         $method = new \ReflectionFunction($closure);
@@ -207,28 +207,6 @@ class Container
     }
 
     /**
-     * setControllerNamespace
-     *
-     * @param  mixed $namespace
-     * @return void
-     */
-    public function setControllerNamespace($namespace)
-    {
-        Router::setControllerNamespace($namespace);
-    }
-
-    /**
-     * setMiddlewareNamespace
-     *
-     * @param  mixed $namespace
-     * @return void
-     */
-    public function setMiddlewareNamespace($namespace)
-    {
-        Router::setMiddlewareNamespace($namespace);
-    }
-
-    /**
      * start
      *
      * @return Yildirim\Routing\Response
@@ -236,17 +214,6 @@ class Container
     public function start()
     {
         return Router::processRequest();
-    }
-
-    /**
-     * enableCsrf
-     *
-     * @param  mixed $bool
-     * @return void
-     */
-    public function enableCsrf(bool $bool)
-    {
-        Router::$csrfEnabled = $bool;
     }
 
 }

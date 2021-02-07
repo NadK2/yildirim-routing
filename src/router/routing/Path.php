@@ -3,6 +3,7 @@
 namespace Yildirim\Routing;
 
 use Exception;
+use Yildirim\Routing\Exceptions\RouteException;
 use Yildirim\Routing\Middleware\PostMiddleware;
 use Yildirim\Routing\Middleware\PutMiddleware;
 
@@ -86,7 +87,7 @@ class Path
             });
 
             if (!$param) {
-                throwException('RouteException', 'Regular Expression constraint for [ ' . $slug . ' ] does not match any given parameter.');
+                throw new RouteException('Regular Expression constraint for [ ' . $slug . ' ] does not match any given parameter.');
             }
 
             $param->regex = $regex;

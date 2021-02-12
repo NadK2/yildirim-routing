@@ -3,8 +3,6 @@
 namespace Yildirim\Routing;
 
 use Yildirim\Routing\Exceptions\RouteException;
-use Yildirim\Routing\Middleware\PostMiddleware;
-use Yildirim\Routing\Middleware\PutMiddleware;
 
 /**
  * Route
@@ -107,10 +105,6 @@ class RouteBuilder
      */
     public static function post($uri, $handler)
     {
-        if (Router::$csrfEnabled) {
-            self::middleware(PostMiddleware::class);
-        }
-
         return self::addRoute('POST', $uri, $handler);
     }
 
@@ -123,7 +117,6 @@ class RouteBuilder
      */
     public static function put($uri, $handler)
     {
-        self::middleware(PutMiddleware::class);
         return self::addRoute('PUT', $uri, $handler);
     }
 
@@ -136,7 +129,6 @@ class RouteBuilder
      */
     public static function patch($uri, $handler)
     {
-        self::middleware(PutMiddleware::class);
         return self::addRoute('PATCH', $uri, $handler);
     }
 
@@ -163,7 +155,7 @@ class RouteBuilder
             self::get("", $handler . "@index");
             self::post("", $handler . "@create");
             self::get('/{id}', $handler . "@show");
-            self::post('/{id}', $handler . "@update");
+            self::put('/{id}', $handler . "@update");
             self::delete('/{id}', $handler . "@destroy");
         });
     }

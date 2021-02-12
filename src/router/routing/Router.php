@@ -6,6 +6,8 @@ use Yildirim\Routing\Exceptions\MethodNotAllowedException;
 use Yildirim\Routing\Exceptions\MiddlewareException;
 use Yildirim\Routing\Exceptions\RouteNotFoundException;
 use Yildirim\Routing\Middleware\CorsMiddleware;
+use Yildirim\Routing\Middleware\PostMiddleware;
+use Yildirim\Routing\Middleware\PutMiddleware;
 
 /**
  *
@@ -95,9 +97,15 @@ class Router
             $response = self::invokeRouteHandler($route, $request);
 
             //check if the response is a Response Object.
-            $responseClass = app()->has('response') ? get_class(app('response', [''])) : Response::class;
-            if ($response instanceof $responseClass) {
+            if ($response instanceof BaseResponseObject) {
                 return $response;
+            }
+
+            if (app()->has('response')) {
+                $class = get_class(app('response', ['']));
+                if ($response instanceof $class) {
+                    return $response;
+                }
             }
 
             //return the response
@@ -194,6 +202,18 @@ class Router
 
         //return an exact method and url match.
         if ($route = self::getMatchingRoute($matches, $path)) {
+
+            if (strtolower($route->method) == "post" && self::$csrfEnabled) {
+                //if method post.
+                $route->middleware = $route->middleware ?? [];
+                array_unshift($route->middleware, PostMiddleware::class);
+
+            } elseif (in_array(strtolower($route->method), ['put', 'patch'])) {
+                //if PUT/PATCH
+                $route->middleware = $route->middleware ?? [];
+                array_unshift($route->middleware, PutMiddleware::class);
+            }
+
             return $route;
         }
 

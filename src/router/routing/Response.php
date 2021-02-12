@@ -3,260 +3,99 @@
 namespace Yildirim\Routing;
 
 use SimpleXMLElement;
-use Yildirim\Interfaces\Arrayable;
-use Yildirim\Interfaces\Jsonable;
+use Yildirim\Routing\Exceptions\ResponseException;
 
-/**
- * Basic Response Class
- *
- *
- */
-class Response
+class Response extends BaseResponseObject
 {
-    /**
-     * contentType
-     *
-     * @var bool
-     */
-    private $contentType = false;
-
-    /**
-     *
-     */
-    public function __construct($response)
-    {
-        $this->body = $response;
-    }
-
-    /**
-     * getBody
-     *
-     * @return void
-     */
-    public function getBody()
-    {
-        return $this->body;
-    }
-
-    /**
-     * setBody
-     *
-     * @param  mixed $body
-     * @return void
-     */
-    public function setBody($body)
-    {
-        $this->body = $body;
-        return $this;
-    }
-
-    /**
-     *
-     */
-    public function send()
-    {
-        $this->setContentTypeHeader();
-
-        echo $this->body;
-
-        return;
-    }
-
-    /**
-     * determineResponseType
-     *
-     * @return void
-     */
-    private function setContentTypeHeader()
-    {
-
-        if ($this->contentType) {
-            return;
-        }
-
-        if ($type = $this->getContentType()) {
-
-            $this->contentType = true;
-
-            return header('Content-Type: ' . $type);
-
-        }
-
-        return;
-
-    }
-
-    /**
-     * getContentType
-     *
-     * @return void
-     */
-    private function getContentType()
-    {
-
-        if ($this->isJson()) {
-            return 'application/json';
-        }
-
-        if ($this->isXml()) {
-            return 'application/xml';
-        }
-
-        return false;
-    }
-
-    /**
-     *
-     */
-    private function isJson()
-    {
-        if ($this->body instanceof Jsonable) {
-
-            $this->body = $this->body->toJson(['response' => true]);
-            return true;
-
-        } elseif ($this->body instanceof Arrayable) {
-
-            $this->body = json_encode($this->body->toArray(['response' => true]));
-            return true;
-
-        } else if (is_array($this->body)) {
-
-            $this->body = json_encode(array_map(function ($item) {
-                return $this->getArrayValues($item);
-            }, $this->body));
-
-            return true;
-
-        }
-
-        return false;
-    }
-
-    /**
-     *
-     */
-    private function isXml()
-    {
-
-        if (is_string($this->body)) {
-            if (substr($this->body, 0, 6) === "<?xml ") {
-                return true;
-            }
-        }
-
-        if (is_object($this->body)) {
-            if ($this->body instanceof SimpleXMLElement) {
-                $this->body = $this->body->asXML();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * withHeaders
-     *
-     * @param  mixed $headers
-     * @return static
-     */
-    public function setHeaders(array $headers)
-    {
-
-        foreach ($headers as $header => $value) {
-
-            if ($header == 'Content-Type') {
-                $this->contentType = true;
-            }
-
-            $this->setHeader($header, $value);
-        }
-
-        return $this;
-    }
-
-    /**
-     * setHeader
-     *
-     * @param  mixed $header
-     * @param  mixed $value
-     * @return static
-     */
-    public function setHeader($header, $value)
-    {
-        header("$header: " . $value);
-        return $this;
-    }
-
-    /**
-     * setCode
-     *
-     * @param  mixed $code
-     * @return static
-     */
-    public function setCode($code)
-    {
-        http_response_code($code);
-        return $this;
-    }
-
-    /**
-     * getArrayValues
-     *
-     * @return void
-     */
-    private function getArrayValues($item)
-    {
-
-        if ($item instanceof Arrayable) {
-            return $item->toArray();
-        }
-
-        if ($item instanceof Jsonable) {
-            return $item->toJson();
-        }
-
-        if (is_array($item)) {
-            foreach ($item as &$i) {
-                $i = $this->getArrayValues($i);
-            }
-        }
-
-        return $item;
-    }
-
-    /**
-     * __toString
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->body;
-    }
 
     /**
      * file
      *
      * @param  string $filepath full path to file
+     * @return FileResponse
+     */
+    public function file($filepath, $filename = null)
+    {
+        return new FileResponse($filepath, $filename);
+    }
+
+    /**
+     * json
+     *
+     * @param  array|string $body
+     * @return static
+     */
+    public function json($body = null)
+    {
+        if ($body !== null) {
+            $this->body = $body;
+        }
+
+        if (!$this->isJson()) {
+            throw new ResponseException('Response is not valid json data.');
+        }
+
+        return $this->setHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * xml
+     *
+     * @param  SimpleXMLElement|string $body
      * @return void
      */
-    public function file($filepath)
+    public function xml($body = null)
     {
-        //get file contents.
-        $this->body = file_get_contents($filepath);
+        if ($body !== null) {
+            $this->body = $body;
+        }
 
-        //get mime type.
-        $mimeType = mime_content_type($filepath);
+        if (!$this->isXml()) {
+            throw new ResponseException('Response is not valid xml data.');
+        }
 
-        //set headers.
-        $this->setHeaders([
-            'Content-Type' => $mimeType,
-            'Content-Length' => filesize($filepath),
-        ]);
+        return $this->setHeader('Content-Type', 'application/xml');
+    }
 
-        return $this;
+    /**
+     * text
+     *
+     * @param  string $body
+     * @return void
+     */
+    public function plain(string $body = null)
+    {
+        if ($body !== null) {
+            $this->body = $body;
+        }
+
+        return $this->setHeader('Content-Type', 'text/plain');
+    }
+
+    /**
+     * plain
+     *
+     * @param  mixed $body
+     * @return void
+     */
+    public function html(string $body = null)
+    {
+        if ($body !== null) {
+            $this->body = $body;
+        }
+
+        return $this->setHeader('Content-Type', 'text/html');
+    }
+
+    /**
+     * redirect
+     *
+     * @param  mixed $location
+     * @return void
+     */
+    public function redirect($location)
+    {
+        header('location: ' . $location);
     }
 
 }

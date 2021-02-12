@@ -114,9 +114,10 @@ class PutMiddleware implements Middleware
                         'size' => strlen($body),
                         'type' => $value,
                     );
-
                     //place in temporary directory
                     file_put_contents($tmp_name, $body);
+
+                    request()->addFile($_FILES[$matches[2]], $matches[2]);
                 }
                 //Parse Field
                 else {

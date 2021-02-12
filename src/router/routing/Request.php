@@ -56,6 +56,7 @@ class Request implements Jsonable, Arrayable
     {
         $this->parseHeaders();
         $this->getRequestData($attributes);
+        $this->getUploadedFiles();
     }
 
     /**
@@ -223,17 +224,42 @@ class Request implements Jsonable, Arrayable
      */
     public function files()
     {
-        return collect($_FILES);
+        return collect($this->files);
     }
 
     /**
      * file
      *
      * @param  mixed $filename
-     * @return void
+     * @return UploadedFile
      */
     public function file($key)
     {
-        return $_FILES[$key] ?? null;
+        return $this->files[$key] ?? null;
+    }
+
+    /**
+     * getUploadedFiles
+     *
+     * @return void
+     */
+    private function getUploadedFiles()
+    {
+        foreach ($_FILES as $name => $file) {
+            $this->files[$name] = new UploadedFile($file, $name);
+        }
+    }
+    
+    /**
+     * addFile
+     *
+     * @param  mixed $file
+     * @param  mixed $name
+     * @return static
+     */
+    public function addFile($file, $key)
+    {
+        $this->files[$key] = new UploadedFile($file, $key);
+        return $this;
     }
 }

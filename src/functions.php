@@ -55,7 +55,6 @@ if (!function_exists('server')) {
      */
     function server($key = null, $defualt = null)
     {
-
         if (!app()->has('server')) {
             app()->setInstance('server', new Yildirim\Classes\Server());
         }
@@ -128,9 +127,9 @@ if (!function_exists('response')) {
      *
      * @param  mixed $response
      * @param  mixed $headers
-     * @return mixed
+     * @return Response
      */
-    function response(string $response = '')
+    function response($response = '')
     {
         if (!app()->has('response')) {
             app()->set('response', Response::class);
